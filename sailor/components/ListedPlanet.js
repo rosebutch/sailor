@@ -1,14 +1,26 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
+import { getSign } from '../astro'
+import { horoscopeBank } from '../constants'
 
-const ListedPlanet = (props) => {
-  const { planet } = props
+const ListedPlanet = props => {
+  const {planet} = props
+
+  const degree = planet.apparentLongitudeDms30.split('°')[0]
+
+  const sign = getSign(planet.apparentLongitudeDd)
+
+  const generateHoroscope = (sign, planet) => {
+    return horoscopeBank.planet[planet] + horoscopeBank.sign[sign]
+  }
+
   return (
-    <View style={styles.container}>
-      {/* this will take planet as props from single day map, display an image, the name, and the current sign and degree */}
-      <Image source={planet.imageUrl} style={styles.icon} />
-      <Text>{planet.name} is at {planet.degree} {planet.sign}</Text>
-      {/* potential future functionality: drop down with automatically generated meaning based on inputs */}
+    <View style={styles.container} >
+      <Image source={props.icon} style={{width: 50, height: 50}} />
+      <View>
+        <Text style={styles.sign} >{planet.name} is at {degree}° {sign}: </Text>
+        <Text>{generateHoroscope(sign, planet.name)}</Text>
+      </View>
     </View>
   );
 }
@@ -16,14 +28,21 @@ const ListedPlanet = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: "row",
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: "flex-start",
   },
-  icon: {
-    width: 50,
-    height: 50,
+  sign: {
+    fontWeight: '700'
   },
+  textContainer: {
+    flex: 1,
+    flexDirection: "column",
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: "center",
+  }
 });
 
 export default ListedPlanet
